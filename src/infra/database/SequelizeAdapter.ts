@@ -1,5 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import { Dialect } from "sequelize";
+import { TransactionModel } from "./model/TransactionModel";
+import { WalletModel } from "./model/WalletModel";
 
 export const SequelizeAdapter = [
     {
@@ -15,7 +17,7 @@ export const SequelizeAdapter = [
                 logging: false
 
             });
-            sequelize.addModels([]);
+            sequelize.addModels([TransactionModel, WalletModel]);
             await sequelize.sync();
             return sequelize;
         }
