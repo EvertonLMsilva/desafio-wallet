@@ -22,4 +22,11 @@ export class TransactionProducer {
             return { message: error?.message }
         }
     }
+
+    async withdrawalProducer(withdrawalTransactionDto: TransactionDto): Promise<ReturnTransactionType> {
+        const codeTransaction = randomUUID();
+        await this.queue.add("withdrawalTransaction-job", { ...withdrawalTransactionDto, codeTransaction });
+
+        return { message: "Saque em andamento!" }
+    }
 }
