@@ -1,6 +1,7 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { SequelizeAdapter } from './infra/database/SequelizeAdapter';
 
 @Module({
   imports: [
@@ -16,6 +17,9 @@ import { ConfigModule } from '@nestjs/config';
     }),
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    ...SequelizeAdapter,
+  ],
+  exports: [...SequelizeAdapter]
 })
-export class AppModule {}
+export class AppModule { }
