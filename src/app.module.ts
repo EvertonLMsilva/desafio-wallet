@@ -7,6 +7,8 @@ import { TransactionProducer } from './jobs/TransactionProducer';
 import { TransactionConsumer } from './jobs/TransactionConsumer';
 import { WalletModel } from './infra/database/model/WalletModel';
 import { TransactionModel } from './infra/database/model/TransactionModel';
+import { ErrorTransactionProducer } from './jobs/ErrorTransactionProducer';
+import { ErrorTransactionConsumer } from './jobs/ErrorTransactionConsumer';
 
 @Module({
   imports: [
@@ -17,6 +19,9 @@ import { TransactionModel } from './infra/database/model/TransactionModel';
     BullModule.registerQueue(
       {name: "transactionDeposit-queue"}
     ),
+    BullModule.registerQueue({
+      name: "errorTransactionDeposit-queue"
+    }),
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST,
@@ -27,6 +32,8 @@ import { TransactionModel } from './infra/database/model/TransactionModel';
   controllers: [TransactionController],
   providers: [
     ...SequelizeAdapter,
+    ErrorTransactionProducer,
+    ErrorTransactionConsumer,
     TransactionProducer,
     TransactionConsumer,
     {

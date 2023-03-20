@@ -15,4 +15,10 @@ export class TransactionController {
         return createTransaction;
     }
 
+    @Post('/withdrawal')
+    withdrawalTransaction(@Body() withdrawalTransactionDto: TransactionDto): Promise<ReturnTransactionType> {
+        const createTransaction = this.transactionProducer.withdrawalProducer(withdrawalTransactionDto);
+        return createTransaction;
+    }
+
 }
