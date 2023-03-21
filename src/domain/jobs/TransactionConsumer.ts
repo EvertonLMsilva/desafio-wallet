@@ -2,11 +2,12 @@ import { Process, Processor } from "@nestjs/bull";
 import { Inject, Injectable } from "@nestjs/common/decorators";
 import { Job } from "bull";
 import { ReturnGetWallet } from "../../types/ReturnGetWallet";
-import { TransactionDto } from "../../Dto/TransactionDto";
+import { TransactionApplicationDto } from "../../Dto/TransactionApplicationDto";
 import { TransactionModel } from "../../infra/database/model/TransactionModel";
 import { WalletModel } from "../../infra/database/model/WalletModel";
 import { TypeTransaction } from "../../enum/TypeTransaction";
 import { ErrorTransactionProducer } from "./ErrorTransactionProducer";
+import { TransactionConsumerDto } from "src/Dto/TransactionConsumerDto";
 
 @Injectable()
 @Processor("transactionDeposit-queue")
@@ -18,7 +19,7 @@ export class TransactionConsumer {
     ) { }
 
     @Process("depositTransaction-job")
-    async depositJob(job: Job<TransactionDto>) {
+    async depositJob(job: Job<TransactionConsumerDto>) {
         const { data } = job;
         const typeTransaction = TypeTransaction.deposit;
 
@@ -33,6 +34,10 @@ export class TransactionConsumer {
                 .catch(err => {
                     throw new Error(`Erro ao criar transação no banco - ${err}`);
                 })
+
+                console.log('----- idWallet', {id: validateWallet?.idWallet});
+                console.log('----- value', {value: validateWallet.HasBalance});
+                
 
             await this.walletRepository.update<WalletModel>(
                 { value: validateWallet.HasBalance },
@@ -55,7 +60,7 @@ export class TransactionConsumer {
     }
 
     @Process("withdrawalTransaction-job")
-    async withdrawalJob(job: Job<TransactionDto>) {
+    async withdrawalJob(job: Job<TransactionConsumerDto>) {
         const { data } = job;
         const typeTransaction = TypeTransaction.withdrawal
 
@@ -96,7 +101,7 @@ export class TransactionConsumer {
     private async walletTransactionCalculation(idAccount: number, newValue: number, typeTransaction: TypeTransaction): Promise<ReturnGetWallet> {
         return await this.walletRepository.findOne({ where: { idAccount } })
             .then(res => {
-                const walletValue = Number(res?.dataValues?.value)
+                const walletValue = Number(res?.dataValues?.value);
 
                 if (typeTransaction === 'withdrawal' && (walletValue - newValue) >= 0) {
                     return {
@@ -104,18 +109,15 @@ export class TransactionConsumer {
                         idWallet: res?.id,
                         type: 'withdrawal'
                     }
-                } else if (typeTransaction === 'deposit') {
-                    return {
-                        HasBalance: walletValue + newValue,
-                        idWallet: res?.id,
-                        type: 'deposit'
-                    }
-                }else {
-                    return {
-                        HasBalance: 0,
-                        idWallet: res?.id,
-                        type: 'error'
-                    }
+                }
+
+                console.log('---- logss', (walletValue + newValue));
+                
+
+                return {
+                    HasBalance: typeTransaction === 'deposit' ? (walletValue + newValue) : 0,
+                    idWallet: res?.id,
+                    type: typeTransaction === 'deposit' ? 'deposit' : 'error'
                 }
 
             })
