@@ -1,5 +1,5 @@
 import { Column, DataType, Model, Table } from "sequelize-typescript";
-import { WalletEntity } from "../../../entity/WalletEntity";
+import { WalletEntity } from "../../../domain/entity/WalletEntity";
 
 @Table({ modelName: 'wallet' })
 export class WalletModel extends Model<WalletEntity> {

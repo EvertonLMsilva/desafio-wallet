@@ -2,13 +2,15 @@ import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeAdapter } from './infra/database/SequelizeAdapter';
-import { TransactionController } from './application/TransactionController';
-import { TransactionProducer } from './jobs/TransactionProducer';
-import { TransactionConsumer } from './jobs/TransactionConsumer';
+import { TransactionController } from './application/TransactionApplication';
+import { TransactionProducer } from './domain/jobs/TransactionProducer';
+import { TransactionConsumer } from './domain/jobs/TransactionConsumer';
 import { WalletModel } from './infra/database/model/WalletModel';
 import { TransactionModel } from './infra/database/model/TransactionModel';
-import { ErrorTransactionProducer } from './jobs/ErrorTransactionProducer';
-import { ErrorTransactionConsumer } from './jobs/ErrorTransactionConsumer';
+import { ErrorTransactionProducer } from './domain/jobs/ErrorTransactionProducer';
+import { ErrorTransactionConsumer } from './domain/jobs/ErrorTransactionConsumer';
+import { BankStatementRepository } from './infra/repository/BankStatementRepository';
+import { BankStatementApplication } from './application/BankStatementApplication';
 
 @Module({
   imports: [
@@ -29,13 +31,14 @@ import { ErrorTransactionConsumer } from './jobs/ErrorTransactionConsumer';
       },
     }),
   ],
-  controllers: [TransactionController],
+  controllers: [TransactionController, BankStatementApplication],
   providers: [
     ...SequelizeAdapter,
     ErrorTransactionProducer,
     ErrorTransactionConsumer,
     TransactionProducer,
     TransactionConsumer,
+    BankStatementRepository,
     {
       provide: 'wallet',
       useValue: WalletModel,
@@ -44,6 +47,7 @@ import { ErrorTransactionConsumer } from './jobs/ErrorTransactionConsumer';
       provide: 'transaction',
       useValue: TransactionModel,
     },
+    BankStatementRepository,
   ],
   exports: [...SequelizeAdapter]
 })

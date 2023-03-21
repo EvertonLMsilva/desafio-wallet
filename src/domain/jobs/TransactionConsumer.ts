@@ -1,11 +1,11 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { Process, Processor } from "@nestjs/bull";
 import { Inject, Injectable } from "@nestjs/common/decorators";
-import { Job, Queue } from "bull";
-import { ReturnGetWallet } from "src/types/ReturnGetWallet";
-import { TransactionDto } from "../Dto/TransactionDto";
-import { TransactionModel } from "../infra/database/model/TransactionModel";
-import { WalletModel } from "../infra/database/model/WalletModel";
-import { TypeTransaction } from "../enum/TypeTransaction";
+import { Job } from "bull";
+import { ReturnGetWallet } from "../../types/ReturnGetWallet";
+import { TransactionDto } from "../../Dto/TransactionDto";
+import { TransactionModel } from "../../infra/database/model/TransactionModel";
+import { WalletModel } from "../../infra/database/model/WalletModel";
+import { TypeTransaction } from "../../enum/TypeTransaction";
 import { ErrorTransactionProducer } from "./ErrorTransactionProducer";
 
 @Injectable()

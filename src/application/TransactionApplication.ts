@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { TransactionDto } from 'src/Dto/TransactionDto';
-import { TransactionProducer } from 'src/jobs/TransactionProducer';
+import { TransactionProducer } from '../domain/jobs/TransactionProducer';
 import { ReturnTransactionType } from 'src/types/ReturnTransactionType';
 
 @Controller('transaction')

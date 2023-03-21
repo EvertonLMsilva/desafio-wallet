@@ -2,8 +2,8 @@ import { InjectQueue } from "@nestjs/bull";
 import { Injectable } from "@nestjs/common";
 import { Queue } from "bull";
 import { randomUUID } from "crypto";
-import { ReturnTransactionType } from "src/types/ReturnTransactionType";
-import { TransactionDto } from "../Dto/TransactionDto";
+import { ReturnTransactionType } from "../../types/ReturnTransactionType";
+import { TransactionDto } from "../../Dto/TransactionDto";
 
 @Injectable()
 export class TransactionProducer {
