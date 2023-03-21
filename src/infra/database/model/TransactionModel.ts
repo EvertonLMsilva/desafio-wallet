@@ -1,5 +1,5 @@
 import { Column, DataType, Model, Table } from "sequelize-typescript";
-import { TransactionEntity } from "../../../entity/TransactionEntity";
+import { TransactionEntity } from "../../../domain/entity/TransactionEntity";
 
 @Table({ modelName: 'transaction' })
 export class TransactionModel extends Model<TransactionEntity> {
@@ -14,5 +14,11 @@ export class TransactionModel extends Model<TransactionEntity> {
 
     @Column
     codeTransaction: string;
+
+    @Column
+    createdAt: Date
+    
+    @Column
+    updatedAt: Date
 
 }
