@@ -1,72 +1,26 @@
 import { Process, Processor } from "@nestjs/bull";
 import { Inject, Injectable } from "@nestjs/common/decorators";
 import { Job } from "bull";
-import { ReturnGetWallet } from "../../types/ReturnGetWallet";
-import { TransactionApplicationDto } from "../../Dto/TransactionApplicationDto";
+import { TransactionDto } from "../../Dto/TransactionDto";
 import { TransactionModel } from "../../infra/database/model/TransactionModel";
 import { WalletModel } from "../../infra/database/model/WalletModel";
 import { TypeTransaction } from "../../enum/TypeTransaction";
 import { ErrorTransactionProducer } from "./ErrorTransactionProducer";
-import { TransactionConsumerDto } from "src/Dto/TransactionConsumerDto";
-import { TransactionDto } from "../../Dto/TransactionDto";
 import { walletTransactionCalculation } from "../utils/walletTransactionCalculation";
 
 @Injectable()
-@Processor("transactionDeposit-queue")
-export class TransactionConsumer {
+@Processor("transactionPurchase-queue")
+export class PurchaseConsumer {
     constructor(
         @Inject('transaction') private transactionRepository: typeof TransactionModel,
         @Inject('wallet') private walletRepository: typeof WalletModel,
         private errorTransactionProducer: ErrorTransactionProducer
     ) { }
 
-    @Process("depositTransaction-job")
-    async depositJob(job: Job<TransactionConsumerDto>) {
+    @Process("purchaseTransaction-job")
+    async purchaseJob(job: Job<TransactionDto>) {
         const { data } = job;
-        const typeTransaction = TypeTransaction.deposit;
-
-        try {
-            if (data.value < 0) throw new Error("Valor informado não pode ser negativo.");
-
-            await this.findDuplicateTransaction(data?.codeTransaction);
-
-            const wallet = await this.walletRepository.findOne({ where: { idAccount: data?.idAccount } })
-
-            const validateWallet = walletTransactionCalculation(
-                data?.value,
-                typeTransaction,
-                { id: wallet?.dataValues?.id, value: wallet?.dataValues?.value }
-            );
-
-            await this.transactionRepository.create<TransactionModel>({ ...data, typeTransaction })
-                .catch(err => {
-                    throw new Error(`Erro ao criar transação no banco - ${err}`);
-                })
-
-            await this.walletRepository.update<WalletModel>(
-                { value: validateWallet.HasBalance },
-                { where: { id: validateWallet?.idWallet } }
-            )
-                .catch(err => {
-                    throw new Error(`Erro ao atualizar carteira de usuário - ${err}`);
-                });
-
-        } catch (error) {
-            await this.errorTransactionProducer.ErrorOnCreateUser({
-                codeTransaction: data?.codeTransaction,
-                description: {
-                    module: 'transaction',
-                    specification: typeTransaction,
-                    message: error.message
-                },
-            });
-        }
-    }
-
-    @Process("withdrawalTransaction-job")
-    async withdrawalJob(job: Job<TransactionConsumerDto>) {
-        const { data } = job;
-        const typeTransaction = TypeTransaction.withdrawal
+        const typeTransaction = TypeTransaction.purchase
 
         try {
             if (data.value < 0) throw new Error("Valor informado não pode ser negativo.");

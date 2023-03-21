@@ -6,7 +6,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Transaction')
 @Controller('transaction')
-export class TransactionController {
+export class TransactionApplication {
 
     constructor(private transactionProducer: TransactionProducer) {
     }

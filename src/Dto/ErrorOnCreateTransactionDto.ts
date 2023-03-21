@@ -1,6 +1,10 @@
+import { IsEmpty, IsNotEmpty } from "class-validator";
 import { DescriptionError } from "../types/DescriptionError";
 
 export class ErrorCreateTransactionDto {
-    codeTransaction: string;
+    @IsEmpty()
+    codeTransaction?: string;
+    
+    @IsNotEmpty()
     description: DescriptionError;
 };
