@@ -15,7 +15,6 @@ export const SequelizeAdapter = [
                 password: process.env.DATABASE_PASSWORD,
                 database: process.env.DATABASE_NAME,
                 logging: false
-
             });
             sequelize.addModels([TransactionModel, WalletModel]);
             await sequelize.sync();
