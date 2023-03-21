@@ -11,13 +11,13 @@ export const walletTransactionCalculation = (newValue: number, typeTransaction: 
 
     if (typeTransaction === 'withdrawal' && (wallet.value - newValue) >= 0) {
         return {
-            HasBalance: wallet?.value - newValue,
+            HasBalance: Number(wallet?.value) - newValue,
             idWallet: wallet?.id,
             type: 'withdrawal'
         }
     } else if (typeTransaction === 'deposit') {
         return {
-            HasBalance: wallet?.value + newValue,
+            HasBalance: Number(wallet?.value) + newValue,
             idWallet: wallet?.id,
             type: 'deposit'
         }
