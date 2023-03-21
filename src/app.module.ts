@@ -17,6 +17,8 @@ import { PurchaseConsumer } from './domain/jobs/PurchaseConsumer';
 import { CancellationProducer } from './domain/jobs/CancellationProducer';
 import { CancellationConsumer } from './domain/jobs/CancellationConsumer';
 import { CancellationApplication } from './application/CancellationApplication';
+import { ReversalProducer } from './domain/jobs/ReversalProducer';
+import { ReversalConsumer } from './domain/jobs/ReversalConsumer';
 
 @Module({
   imports: [
@@ -35,6 +37,9 @@ import { CancellationApplication } from './application/CancellationApplication';
     }),
     BullModule.registerQueue({
       name: "cancellation-queue"
+    }),
+    BullModule.registerQueue({
+      name: "reversal-queue"
     }),
     BullModule.forRoot({
       redis: {
@@ -59,6 +64,8 @@ import { CancellationApplication } from './application/CancellationApplication';
     BankStatementRepository,
     CancellationProducer,
     CancellationConsumer,
+    ReversalProducer,
+    ReversalConsumer,
     {
       provide: 'wallet',
       useValue: WalletModel,

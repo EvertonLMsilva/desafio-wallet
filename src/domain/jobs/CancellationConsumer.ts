@@ -5,6 +5,7 @@ import { Job } from "bull";
 import { TransactionModel } from "src/infra/database/model/TransactionModel";
 import { ErrorProducer } from "./ErrorProducer";
 import { TypeTransaction } from "src/enum/TypeTransaction";
+import { ReversalProducer } from "./ReversalProducer";
 
 @Injectable()
 @Processor("cancellation-queue")
@@ -12,6 +13,7 @@ export class CancellationConsumer {
     constructor(
         @Inject('transaction') private transactionRepository: typeof TransactionModel,
         private errorProducer: ErrorProducer,
+        private reversalProducer: ReversalProducer
     ) { }
 
     @Process("cancellation-job")
@@ -43,14 +45,13 @@ export class CancellationConsumer {
             })
 
             if(Duplicate?.dataValues) throw new Error('Transação já cancelada!')
-            
+
             await this.transactionRepository.update(
                 { active: false },
                 {
                     where: {
                         idAccount: data?.idAccount,
                         codeTransaction: data?.codeTransaction,
-
                     }
                 }
             )
@@ -65,6 +66,12 @@ export class CancellationConsumer {
                 .catch(err => {
                     throw new Error(`Erro ao criar transação no banco - ${err}`);
                 })
+
+            await this.reversalProducer.createReversal({
+                idAccount: data?.idAccount,
+                codeTransaction: transaction?.dataValues?.codeTransaction,
+                description: transaction?.dataValues?.description
+            })
 
         } catch (error) {
             await this.errorProducer.ErrorInJob({

@@ -3,5 +3,6 @@ export enum TypeTransaction {
     withdrawal = 'withdrawal',
     purchase = 'purchase',
     cancellation = 'cancellation',
+    reversal = 'reversal',
     error = 'error',
 };
