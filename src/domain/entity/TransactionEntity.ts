@@ -4,6 +4,7 @@ export type TransactionEntity = {
     typeTransaction: string,
     codeTransaction: string,
     description: string,
+    active: boolean,
     createdAt: string,
     updatedAt: string,
 }

@@ -4,14 +4,14 @@ import { Job } from "bull";
 import { ErrorCreateTransactionDto } from "src/Dto/ErrorOnCreateTransactionDto";
 
 @Injectable()
-@Processor("errorTransactionDeposit-queue")
-export class ErrorTransactionConsumer {
+@Processor("errorTransaction-queue")
+export class ErrorConsumer {
     constructor() { }
 
     @Process("errorInTransaction-job")
-    async depositJob(job: Job<ErrorCreateTransactionDto>) {
+    async errorJob(job: Job<ErrorCreateTransactionDto>) {
         const { data } = job;
-        console.log('--------- job consumer error transaction', data);
+        console.log('--------- job consumer error', data);
     }
 
 }

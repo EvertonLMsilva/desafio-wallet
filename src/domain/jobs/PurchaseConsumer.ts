@@ -5,7 +5,7 @@ import { TransactionDto } from "../../Dto/TransactionDto";
 import { TransactionModel } from "../../infra/database/model/TransactionModel";
 import { WalletModel } from "../../infra/database/model/WalletModel";
 import { TypeTransaction } from "../../enum/TypeTransaction";
-import { ErrorTransactionProducer } from "./ErrorTransactionProducer";
+import { ErrorProducer } from "./ErrorProducer";
 import { walletTransactionCalculation } from "../utils/walletTransactionCalculation";
 
 @Injectable()
@@ -14,7 +14,7 @@ export class PurchaseConsumer {
     constructor(
         @Inject('transaction') private transactionRepository: typeof TransactionModel,
         @Inject('wallet') private walletRepository: typeof WalletModel,
-        private errorTransactionProducer: ErrorTransactionProducer
+        private errorProducer: ErrorProducer
     ) { }
 
     @Process("purchaseTransaction-job")
@@ -51,7 +51,7 @@ export class PurchaseConsumer {
                 })
 
         } catch (error) {
-            await this.errorTransactionProducer.ErrorOnCreateUser({
+            await this.errorProducer.ErrorInJob({
                 codeTransaction: data?.codeTransaction,
                 description: {
                     module: 'transaction',

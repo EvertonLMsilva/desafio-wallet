@@ -17,11 +17,13 @@ export class TransactionModel extends Model<TransactionEntity> {
     
     @Column
     description: string;
+    
+    @Column({ defaultValue: true})
+    active: boolean;
 
     @Column
     createdAt: Date
     
     @Column
     updatedAt: Date
-
 }

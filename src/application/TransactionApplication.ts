@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { TransactionApplicationDto } from 'src/Dto/TransactionApplicationDto';
 import { TransactionProducer } from '../domain/jobs/TransactionProducer';
-import { ReturnTransactionType } from 'src/types/ReturnTransactionType';
+import { ReturnTransactionType } from '../types/ReturnTransactionType';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Transaction')

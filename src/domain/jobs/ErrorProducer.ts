@@ -5,11 +5,11 @@ import { ErrorCreateTransactionDto } from "src/Dto/ErrorOnCreateTransactionDto";
 
 
 @Injectable()
-export class ErrorTransactionProducer {
-    constructor(@InjectQueue('errorTransactionDeposit-queue') private queue: Queue) {
+export class ErrorProducer {
+    constructor(@InjectQueue('errorTransaction-queue') private queue: Queue) {
     }
 
-    async ErrorOnCreateUser(errorOnCreateTransactionDto: ErrorCreateTransactionDto) {
+    async ErrorInJob(errorOnCreateTransactionDto: ErrorCreateTransactionDto) {
         await this.queue.add("errorInTransaction-job", errorOnCreateTransactionDto)
     }
 }

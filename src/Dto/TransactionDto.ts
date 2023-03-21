@@ -7,6 +7,6 @@ export class TransactionDto {
     @IsNotEmpty()
     value: number;
 
-    @IsEmpty()
+    @IsNotEmpty()
     codeTransaction?: string;
 }

@@ -1,12 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Op } from 'sequelize';
-import { BankStatementInterface } from 'src/domain/repository/BankStatementInterface';
 import { DateStatementDto } from 'src/Dto/DateStatementDto';
 import { TransactionModel } from '../database/model/TransactionModel';
 import { WalletModel } from '../database/model/WalletModel';
 
 @Injectable()
-export class BankStatementRepository implements BankStatementInterface {
+export class BankStatementRepository {
     constructor(
         @Inject('transaction') private transactionRepository: typeof TransactionModel,
         @Inject('wallet') private walletRepository: typeof WalletModel
@@ -15,7 +14,7 @@ export class BankStatementRepository implements BankStatementInterface {
 
     async findStatement(dateStatement: DateStatementDto): Promise<any> {        
         const statement = await this.transactionRepository.findAll({
-            attributes: {exclude: ['id', 'updatedAt', 'idAccount', 'codeTransaction']},
+            attributes: {exclude: ['id', 'updatedAt', 'idAccount', 'codeTransaction', 'active']},
             where: {
                 idAccount: dateStatement?.idAccount,
                 [Op.and]: [
