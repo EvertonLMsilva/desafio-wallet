@@ -2,7 +2,7 @@ import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeAdapter } from './infra/database/SequelizeAdapter';
-import { TransactionController } from './application/TransactionApplication';
+import { TransactionApplication } from './application/TransactionApplication';
 import { TransactionProducer } from './domain/jobs/TransactionProducer';
 import { TransactionConsumer } from './domain/jobs/TransactionConsumer';
 import { WalletModel } from './infra/database/model/WalletModel';
@@ -11,6 +11,9 @@ import { ErrorTransactionProducer } from './domain/jobs/ErrorTransactionProducer
 import { ErrorTransactionConsumer } from './domain/jobs/ErrorTransactionConsumer';
 import { BankStatementRepository } from './infra/repository/BankStatementRepository';
 import { BankStatementApplication } from './application/BankStatementApplication';
+import { PurchaseApplication } from './application/PurchaseApplication';
+import { PurchaseRepository } from './domain/jobs/PurchaseProducer';
+import { PurchaseConsumer } from './domain/jobs/PurchaseConsumer';
 
 @Module({
   imports: [
@@ -18,6 +21,9 @@ import { BankStatementApplication } from './application/BankStatementApplication
       isGlobal: true,
       envFilePath: '.env.develop'
     }),
+    BullModule.registerQueue(
+      {name: "transactionPurchase-queue"}
+    ),
     BullModule.registerQueue(
       {name: "transactionDeposit-queue"}
     ),
@@ -31,13 +37,14 @@ import { BankStatementApplication } from './application/BankStatementApplication
       },
     }),
   ],
-  controllers: [TransactionController, BankStatementApplication],
+  controllers: [TransactionApplication, BankStatementApplication, PurchaseApplication],
   providers: [
     ...SequelizeAdapter,
     ErrorTransactionProducer,
     ErrorTransactionConsumer,
     TransactionProducer,
     TransactionConsumer,
+    PurchaseConsumer,
     BankStatementRepository,
     {
       provide: 'wallet',
@@ -48,6 +55,7 @@ import { BankStatementApplication } from './application/BankStatementApplication
       useValue: TransactionModel,
     },
     BankStatementRepository,
+    PurchaseRepository
   ],
   exports: [...SequelizeAdapter]
 })

@@ -14,6 +14,9 @@ export class TransactionModel extends Model<TransactionEntity> {
 
     @Column
     codeTransaction: string;
+    
+    @Column
+    description: string;
 
     @Column
     createdAt: Date

@@ -12,7 +12,6 @@ export class ErrorTransactionConsumer {
     async depositJob(job: Job<ErrorCreateTransactionDto>) {
         const { data } = job;
         console.log('--------- job consumer error transaction', data);
-        
     }
 
 }

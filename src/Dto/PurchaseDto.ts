@@ -1,12 +1,15 @@
 import { IsEmpty, IsNotEmpty } from "class-validator";
 
-export class TransactionDto {
+export class PurchaseDto {
     @IsNotEmpty()
     idAccount: number;
     
     @IsNotEmpty()
     value: number;
-
+    
     @IsEmpty()
-    codeTransaction?: string;
+    codeTransaction?: string
+
+    @IsNotEmpty()
+    description?: string
 }

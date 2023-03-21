@@ -4,7 +4,7 @@ import { TransactionProducer } from '../domain/jobs/TransactionProducer';
 import { ReturnTransactionType } from 'src/types/ReturnTransactionType';
 
 @Controller('transaction')
-export class TransactionController {
+export class TransactionApplication {
 
     constructor(private transactionProducer: TransactionProducer) {
     }
