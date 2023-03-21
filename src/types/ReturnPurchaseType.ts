@@ -1,0 +1,3 @@
+type ReturnPurchaseType = {
+    message: string;
+};

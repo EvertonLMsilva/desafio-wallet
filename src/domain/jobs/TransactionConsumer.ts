@@ -6,7 +6,7 @@ import { TransactionApplicationDto } from "../../Dto/TransactionApplicationDto";
 import { TransactionModel } from "../../infra/database/model/TransactionModel";
 import { WalletModel } from "../../infra/database/model/WalletModel";
 import { TypeTransaction } from "../../enum/TypeTransaction";
-import { ErrorTransactionProducer } from "./ErrorTransactionProducer";
+import { ErrorProducer } from "./ErrorProducer";
 import { TransactionConsumerDto } from "src/Dto/TransactionConsumerDto";
 import { TransactionDto } from "../../Dto/TransactionDto";
 import { walletTransactionCalculation } from "../utils/walletTransactionCalculation";
@@ -17,7 +17,7 @@ export class TransactionConsumer {
     constructor(
         @Inject('transaction') private transactionRepository: typeof TransactionModel,
         @Inject('wallet') private walletRepository: typeof WalletModel,
-        private errorTransactionProducer: ErrorTransactionProducer
+        private errorProducer: ErrorProducer
     ) { }
 
     @Process("depositTransaction-job")
@@ -52,7 +52,7 @@ export class TransactionConsumer {
                 });
 
         } catch (error) {
-            await this.errorTransactionProducer.ErrorOnCreateUser({
+            await this.errorProducer.ErrorInJob({
                 codeTransaction: data?.codeTransaction,
                 description: {
                     module: 'transaction',
@@ -97,7 +97,7 @@ export class TransactionConsumer {
                 })
 
         } catch (error) {
-            await this.errorTransactionProducer.ErrorOnCreateUser({
+            await this.errorProducer.ErrorInJob({
                 codeTransaction: data?.codeTransaction,
                 description: {
                     module: 'transaction',

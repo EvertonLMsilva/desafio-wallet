@@ -7,13 +7,18 @@ import { TransactionProducer } from './domain/jobs/TransactionProducer';
 import { TransactionConsumer } from './domain/jobs/TransactionConsumer';
 import { WalletModel } from './infra/database/model/WalletModel';
 import { TransactionModel } from './infra/database/model/TransactionModel';
-import { ErrorTransactionProducer } from './domain/jobs/ErrorTransactionProducer';
-import { ErrorTransactionConsumer } from './domain/jobs/ErrorTransactionConsumer';
+import { ErrorProducer } from './domain/jobs/ErrorProducer';
+import { ErrorConsumer } from './domain/jobs/ErrorConsumer';
 import { BankStatementRepository } from './infra/repository/BankStatementRepository';
 import { BankStatementApplication } from './application/BankStatementApplication';
 import { PurchaseApplication } from './application/PurchaseApplication';
-import { PurchaseRepository } from './domain/jobs/PurchaseProducer';
+import { PurchaseProducer } from './domain/jobs/PurchaseProducer';
 import { PurchaseConsumer } from './domain/jobs/PurchaseConsumer';
+import { CancellationProducer } from './domain/jobs/CancellationProducer';
+import { CancellationConsumer } from './domain/jobs/CancellationConsumer';
+import { CancellationApplication } from './application/CancellationApplication';
+import { ReversalProducer } from './domain/jobs/ReversalProducer';
+import { ReversalConsumer } from './domain/jobs/ReversalConsumer';
 
 @Module({
   imports: [
@@ -22,13 +27,19 @@ import { PurchaseConsumer } from './domain/jobs/PurchaseConsumer';
       envFilePath: '.env.develop'
     }),
     BullModule.registerQueue(
-      {name: "transactionPurchase-queue"}
+      { name: "transactionPurchase-queue" }
     ),
     BullModule.registerQueue(
-      {name: "transactionDeposit-queue"}
+      { name: "transactionDeposit-queue" }
     ),
     BullModule.registerQueue({
-      name: "errorTransactionDeposit-queue"
+      name: "errorTransaction-queue"
+    }),
+    BullModule.registerQueue({
+      name: "cancellation-queue"
+    }),
+    BullModule.registerQueue({
+      name: "reversal-queue"
     }),
     BullModule.forRoot({
       redis: {
@@ -37,15 +48,24 @@ import { PurchaseConsumer } from './domain/jobs/PurchaseConsumer';
       },
     }),
   ],
-  controllers: [TransactionApplication, BankStatementApplication, PurchaseApplication],
+  controllers: [
+    TransactionApplication, 
+    BankStatementApplication, 
+    PurchaseApplication, 
+    CancellationApplication
+  ],
   providers: [
     ...SequelizeAdapter,
-    ErrorTransactionProducer,
-    ErrorTransactionConsumer,
+    ErrorProducer,
+    ErrorConsumer,
     TransactionProducer,
     TransactionConsumer,
     PurchaseConsumer,
     BankStatementRepository,
+    CancellationProducer,
+    CancellationConsumer,
+    ReversalProducer,
+    ReversalConsumer,
     {
       provide: 'wallet',
       useValue: WalletModel,
@@ -55,7 +75,7 @@ import { PurchaseConsumer } from './domain/jobs/PurchaseConsumer';
       useValue: TransactionModel,
     },
     BankStatementRepository,
-    PurchaseRepository
+    PurchaseProducer
   ],
   exports: [...SequelizeAdapter]
 })
