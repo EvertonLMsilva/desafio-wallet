@@ -9,7 +9,7 @@ type Wallet = {
 
 export const walletTransactionCalculation = (newValue: number, typeTransaction: TypeTransaction, wallet: Wallet): ReturnGetWallet => {
 
-    if (typeTransaction === 'withdrawal' && (wallet.value - newValue) >= 0) {
+    if ((typeTransaction === 'withdrawal' || typeTransaction === 'purchase') && (wallet.value - newValue) >= 0) {
         return {
             HasBalance: Number(wallet?.value) - newValue,
             idWallet: wallet?.id,

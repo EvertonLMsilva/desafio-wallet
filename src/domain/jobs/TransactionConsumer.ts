@@ -1,11 +1,14 @@
 import { Process, Processor } from "@nestjs/bull";
 import { Inject, Injectable } from "@nestjs/common/decorators";
 import { Job } from "bull";
-import { TransactionDto } from "../../Dto/TransactionDto";
+import { ReturnGetWallet } from "../../types/ReturnGetWallet";
+import { TransactionApplicationDto } from "../../Dto/TransactionApplicationDto";
 import { TransactionModel } from "../../infra/database/model/TransactionModel";
 import { WalletModel } from "../../infra/database/model/WalletModel";
 import { TypeTransaction } from "../../enum/TypeTransaction";
 import { ErrorTransactionProducer } from "./ErrorTransactionProducer";
+import { TransactionConsumerDto } from "src/Dto/TransactionConsumerDto";
+import { TransactionDto } from "../../Dto/TransactionDto";
 import { walletTransactionCalculation } from "../utils/walletTransactionCalculation";
 
 @Injectable()
@@ -18,7 +21,7 @@ export class TransactionConsumer {
     ) { }
 
     @Process("depositTransaction-job")
-    async depositJob(job: Job<TransactionDto>) {
+    async depositJob(job: Job<TransactionConsumerDto>) {
         const { data } = job;
         const typeTransaction = TypeTransaction.deposit;
 
@@ -61,7 +64,7 @@ export class TransactionConsumer {
     }
 
     @Process("withdrawalTransaction-job")
-    async withdrawalJob(job: Job<TransactionDto>) {
+    async withdrawalJob(job: Job<TransactionConsumerDto>) {
         const { data } = job;
         const typeTransaction = TypeTransaction.withdrawal
 
