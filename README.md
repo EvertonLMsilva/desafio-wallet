@@ -8,6 +8,7 @@ Docker, Redis, Sql, Mysql.
 - As transações estão em filas, pois alem de garantir entrega, foi pensado em evitar duplicidades e na esperiencia do usuário.
 - Usei o Orm Squelize para facilitar o desenvolvimento, mas como melhoria usar um adaptador seria uma boa ideia.
 - Não tive tempo para os testes unitários, mas seria interessanteter um coverage alto.
+- Como fiz o serviço apenas olhando em transações, algumas validações ficaram de fora, pois precisaria pensar em outro serviço fora do contexto.
 - O projeto esta em docker e para facilitar a configuração, configurei o docker-composer para levanter todos container.
 
 ## Instalação

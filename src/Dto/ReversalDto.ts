@@ -1,12 +1,12 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
 export class ReversalDto {
-    @IsNotEmpty()
-    idAccount: number;
-        
-    @IsNotEmpty()
-    codeTransaction?: string
+  @IsNotEmpty()
+  idAccount: number;
 
-    @IsNotEmpty()
-    description?: string
+  @IsNotEmpty()
+  codeTransaction?: string;
+
+  @IsNotEmpty()
+  description?: string;
 }
