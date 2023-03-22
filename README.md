@@ -10,55 +10,35 @@ Docker, Redis, Sql, Mysql.
 - Não tive tempo para os testes unitários, mas seria interessanteter um coverage alto.
 - O projeto esta em docker e para facilitar a configuração, configurei o docker-composer para levanter todos container.
 
-## Description
+## Instalação
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+#### Docker
+Instale em sua máquina o [Docker](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module) e em seguida rode este comando.
+```bash
+$ docker compose up
+```
+Para levantar os container do docker exeto a aplicação, sendo assim, você poderá desenvolver e ver em tempo real suas atualizações.
+```bash
+$ docker compose up db redis
+```
+após instale o [nodejs](https://nodejs.org/dist/v18.15.0/node-v18.15.0-x64.msi).
+Certifique que tenha o arquivo ```.env``` e ```.env.dev``` na raiz do projeto
 
-## Installation
+- No arquivo .env.example, você precisa apenas adicionar um login e senha para as variaveis ```DATABASE_USER```, ```DATABASE_PASSWORD``` e criar uma copia para ```.env``` para os containers e ```.env.dev``` para rodar local.
+
 
 ```bash
 $ npm install
-```
-
-## Running docker-compose
-docker compose up --force-recreate
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
 $ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
-## Test
+#### Migrations e seeds
 
-```bash
-# unit tests
-$ npm run test
+Após configurar o docker com seus containers, você precisa acessar o MySql e rodar as migrations e seeds.
 
-# e2e tests
-$ npm run test:e2e
+Para agilizar use o [MySQL Workbench](https://dev.mysql.com/downloads/workbench/), assim poderá configurar a conexão e testar, apos podera user sql para criar as tabelas e seeds.
 
-# test coverage
-$ npm run test:cov
-```
+- Path das migration
+```./docks/migrations```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+--img--
