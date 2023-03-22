@@ -42,4 +42,66 @@ Para agilizar use o [MySQL Workbench](https://dev.mysql.com/downloads/workbench/
 - Path das migration
 ```./docks/migrations```
 
---img--
+<div align="center">
+    <img src="https://user-images.githubusercontent.com/35983284/226993907-1432e37e-9e78-4fb1-9cf1-a947e059d1e8.png" width="200px" />
+</div>
+
+#### Fluxos
+Segua abaixo o fluxo de filas e requests do projeto.
+
+- ### Saldo
+
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993909-300fc903-bf80-4b97-a3e3-5f4ca496136e.jpg" height="150px" />
+</div>
+
+- ### Deposito
+
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993879-00c132ff-c0b4-44d6-a87b-d44908928834.jpg" height="150px" />
+</div>
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993870-4b706fe3-f799-4a20-b594-8b2c029bb263.jpg" height="150px" />
+</div>
+
+- ### Cancelamento
+
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993887-ccd5a259-45e9-4d00-ad55-349e9052ad23.jpg" height="150px" />
+</div>
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993881-5371523a-34ab-44d8-a2ae-5c3f11b41e55.jpg" height="150px" />
+</div>
+
+- ### Compras
+
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993893-3b6486e6-36d3-411e-b262-8e40fd69b9a4.jpg" height="150px" />
+</div>
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993890-97f7815b-e8a3-4a38-b974-ce9680376ed9.jpg" height="150px" />
+</div>
+
+- ### Estorno
+
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993898-aadc484e-167d-4a8b-8af7-83330d36ed01.jpg" height="150px" />
+</div>
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993895-03d4585f-4d6f-4402-b10e-30860c97acaf.jpg" height="150px" />
+</div>
+
+- ### Extrato
+
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993903-dba17e97-65bc-41b5-a472-230b8475c937.jpg" height="150px" />
+</div>
+
+- ### Saque
+
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993912-14b8aac0-f3fc-4fc7-8318-8339c602e2a1.jpg" height="150px" />
+</div>
+<div>
+    <img src="https://user-images.githubusercontent.com/35983284/226993910-bb62feef-fb9a-4ec3-90ce-8def8e53efe9.jpg" height="150px" />
+</div>

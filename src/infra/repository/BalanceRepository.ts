@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { BalanceDto } from 'src/Dto/BalanceDto';
-import { TransactionModel } from '../database/model/TransactionModel';
 import { WalletModel } from '../database/model/WalletModel';
 
 @Injectable()
