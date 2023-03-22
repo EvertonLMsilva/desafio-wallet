@@ -19,12 +19,14 @@ import { CancellationConsumer } from './domain/jobs/CancellationConsumer';
 import { CancellationApplication } from './application/CancellationApplication';
 import { ReversalProducer } from './domain/jobs/ReversalProducer';
 import { ReversalConsumer } from './domain/jobs/ReversalConsumer';
+import { BalanceApplication } from './application/BalanceApplication';
+import { BalanceRepository } from './infra/repository/BalanceRepository';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: `.env${(process.env.NODE_ENV ? ('.' + process.env.NODE_ENV.trim()) : '')}`,
       isGlobal: true,
-      envFilePath: '.env.develop'
     }),
     BullModule.registerQueue(
       { name: "transactionPurchase-queue" }
@@ -49,10 +51,11 @@ import { ReversalConsumer } from './domain/jobs/ReversalConsumer';
     }),
   ],
   controllers: [
-    TransactionApplication, 
-    BankStatementApplication, 
-    PurchaseApplication, 
-    CancellationApplication
+    TransactionApplication,
+    BankStatementApplication,
+    PurchaseApplication,
+    CancellationApplication,
+    BalanceApplication
   ],
   providers: [
     ...SequelizeAdapter,
@@ -66,6 +69,7 @@ import { ReversalConsumer } from './domain/jobs/ReversalConsumer';
     CancellationConsumer,
     ReversalProducer,
     ReversalConsumer,
+    BalanceRepository,
     {
       provide: 'wallet',
       useValue: WalletModel,

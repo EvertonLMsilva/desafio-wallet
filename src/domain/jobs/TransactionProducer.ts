@@ -3,14 +3,15 @@ import { Injectable } from "@nestjs/common";
 import { Queue } from "bull";
 import { randomUUID } from "crypto";
 import { ReturnTransactionType } from "../../types/ReturnTransactionType";
-import { TransactionApplicationDto } from "../../Dto/TransactionApplicationDto";
+import { TransactionDepositDto } from "../../Dto/TransactionDepositDto";
+import { TransactionWithdrawalDto } from "src/Dto/TransactionWithdrawalDto";
 
 @Injectable()
 export class TransactionProducer {
     constructor(@InjectQueue('transactionDeposit-queue') private queue: Queue) {
     }
 
-    async depositProducer(depositTransactionDto: TransactionApplicationDto): Promise<ReturnTransactionType> {
+    async depositProducer(depositTransactionDto: TransactionDepositDto): Promise<ReturnTransactionType> {
         try {
             if (depositTransactionDto.value < 0) throw new Error("Valor informado não pode ser negativo.");
             
@@ -23,7 +24,7 @@ export class TransactionProducer {
         }
     }
 
-    async withdrawalProducer(withdrawalTransactionDto: TransactionApplicationDto): Promise<ReturnTransactionType> {
+    async withdrawalProducer(withdrawalTransactionDto: TransactionWithdrawalDto): Promise<ReturnTransactionType> {
         const codeTransaction = randomUUID();
         await this.queue.add("withdrawalTransaction-job", { ...withdrawalTransactionDto, codeTransaction });
 

@@ -1,8 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ReturnTransactionType } from 'src/types/ReturnTransactionType';
-import { PurchaseDto } from 'src/Dto/PurchaseDto';
-import { PurchaseProducer } from 'src/domain/jobs/PurchaseProducer';
-
+import { PurchaseDto } from '../Dto/PurchaseDto';
+import { PurchaseProducer } from '../domain/jobs/PurchaseProducer';
+import { ApiTags } from '@nestjs/swagger';
+import { ReturnPurchaseType } from '../types/ReturnPurchaseType';
+@ApiTags('Purchase')
 @Controller('purchase')
 export class PurchaseApplication {
 
@@ -10,7 +11,7 @@ export class PurchaseApplication {
     }
 
     @Post()
-    createPurchase(@Body() purchaseDto: PurchaseDto): Promise<ReturnTransactionType> {         
+    createPurchase(@Body() purchaseDto: PurchaseDto): Promise<ReturnPurchaseType> {         
         const createPurchase = this.purchaseProducer.createPurchase(purchaseDto);
         return createPurchase;
     }

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class TransactionApplicationDto {
+export class TransactionWithdrawalDto {
     @ApiProperty({
         description: 'Este id é utilizado para identificar quem vai receber a transação!',
         example: '1'
@@ -15,7 +15,7 @@ export class TransactionApplicationDto {
 
     @ApiProperty({
         description: 'Esta propriedade tem a responsabilidade de adicionar algum detalhe da transação.',
-        example: 'Depósito na conta XXXX'
+        example: 'Saque na conta XXXX'
     })
 
     @ApiProperty({
