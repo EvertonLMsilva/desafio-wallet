@@ -1,8 +1,6 @@
 import { Process, Processor } from "@nestjs/bull";
 import { Inject, Injectable } from "@nestjs/common/decorators";
 import { Job } from "bull";
-import { ReturnGetWallet } from "../../types/ReturnGetWallet";
-import { TransactionApplicationDto } from "../../Dto/TransactionApplicationDto";
 import { TransactionModel } from "../../infra/database/model/TransactionModel";
 import { WalletModel } from "../../infra/database/model/WalletModel";
 import { TypeTransaction } from "../../enum/TypeTransaction";
@@ -28,7 +26,10 @@ export class TransactionConsumer {
         try {
             if (data.value < 0) throw new Error("Valor informado não pode ser negativo.");
 
-            await this.findDuplicateTransaction(data?.codeTransaction);
+            await this.findDuplicateTransaction(data?.codeTransaction)
+            .catch(err => {
+                throw new Error(`Erro ao criar transação no banco - ${err}`);
+            })
 
             const wallet = await this.walletRepository.findOne({ where: { idAccount: data?.idAccount } })
 
@@ -71,9 +72,13 @@ export class TransactionConsumer {
         try {
             if (data.value < 0) throw new Error("Valor informado não pode ser negativo.");
 
-            await this.findDuplicateTransaction(data?.codeTransaction);
+            await this.findDuplicateTransaction(data?.codeTransaction).catch(err => {
+                throw new Error(`Erro ao criar transação no banco - 01${err}`);
+            })
 
-            const wallet = await this.walletRepository.findOne({ where: { idAccount: data?.idAccount } })
+            const wallet = await this.walletRepository.findOne({ where: { idAccount: data?.idAccount } }).catch(err => {
+                throw new Error(`Erro ao criar transação no banco - ${err}`);
+            })
 
             const validateWallet = walletTransactionCalculation(
                 data?.value,
@@ -113,6 +118,9 @@ export class TransactionConsumer {
             where: { codeTransaction }
         }).then((resolve) => {
             if (resolve) throw new Error("Transação já realizada.");
+        })
+        .catch(err => {
+            throw new Error(`Erro ao criar transação no banco - 00 ${err}`);
         })
     }
 

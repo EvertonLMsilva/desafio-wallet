@@ -1,8 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { CancellationProducer } from 'src/domain/jobs/CancellationProducer';
-import { CancellationDto } from 'src/Dto/CancellationDto';
-import { ReturnCancellationType } from 'src/types/ReturnCancellationType';
+import { ApiTags } from '@nestjs/swagger';
+import { CancellationProducer } from '../domain/jobs/CancellationProducer';
+import { CancellationDto } from '../Dto/CancellationDto';
+import { ReturnCancellationType } from '../types/ReturnCancellationType';
 
+@ApiTags('Cancellation')
 @Controller('cancellation')
 export class CancellationApplication {
 

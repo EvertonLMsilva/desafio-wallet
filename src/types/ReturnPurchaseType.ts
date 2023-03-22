@@ -1,3 +1,3 @@
-type ReturnPurchaseType = {
+export type ReturnPurchaseType = {
     message: string;
 };
