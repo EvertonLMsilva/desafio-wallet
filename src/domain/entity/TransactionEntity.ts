@@ -1,10 +1,12 @@
-export type TransactionEntity = { 
-    idAccount: number, 
-    value: number, 
-    typeTransaction: string,
-    codeTransaction: string,
-    description: string,
-    active: boolean,
-    createdAt: string,
-    updatedAt: string,
+export default class TransactionEntity {
+  constructor(
+    readonly idAccount: number,
+    readonly value: number,
+    readonly typeTransaction: string,
+    readonly codeTransaction: string,
+    readonly description: string,
+    readonly active: boolean,
+    readonly createdAt: Date,
+    readonly updatedAt: Date,
+  ) {}
 }

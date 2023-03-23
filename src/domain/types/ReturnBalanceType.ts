@@ -1,3 +1,3 @@
 export type ReturnBalanceType = {
-    message: string;
+  value: number;
 };

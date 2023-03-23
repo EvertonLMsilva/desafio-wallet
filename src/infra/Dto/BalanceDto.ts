@@ -6,5 +6,5 @@ export class BalanceDto {
         example: '1'
     })
     @IsNotEmpty()
-    idAccount: string;
+    idAccount: number;
 }
