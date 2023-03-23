@@ -1,20 +1,21 @@
 import { Process, Processor } from '@nestjs/bull';
 import { Inject, Injectable } from '@nestjs/common/decorators';
 import { Job } from 'bull';
-import { TransactionDto } from '../../Dto/TransactionDto';
-import { TransactionModel } from '../../infra/database/model/TransactionModel';
-import { WalletModel } from '../../infra/database/model/WalletModel';
+import { TransactionDto } from '../dto/TransactionDto';
 import { TypeTransaction } from '../../enum/TypeTransaction';
 import { ErrorProducer } from './ErrorProducer';
 import { walletTransactionCalculation } from '../utils/walletTransactionCalculation';
+import { TransactionRepository } from '../repository/TransactionRepository';
+import { WalletRepository } from '../repository/WalletRepository';
 
 @Injectable()
 @Processor('transactionPurchase-queue')
 export class PurchaseConsumer {
   constructor(
-    @Inject('transaction')
-    private transactionRepository: typeof TransactionModel,
-    @Inject('wallet') private walletRepository: typeof WalletModel,
+    @Inject('transactionInterface')
+    private transactionRepository: TransactionRepository,
+    @Inject('walletInterface')
+    private walletRepository: WalletRepository,
     private errorProducer: ErrorProducer,
   ) {}
 
@@ -29,30 +30,30 @@ export class PurchaseConsumer {
 
       await this.findDuplicateTransaction(data?.codeTransaction);
 
-      const wallet = await this.walletRepository.findOne({
-        where: { idAccount: data?.idAccount },
+      const wallet = await this.walletRepository.getOne({
+        idAccount: data?.idAccount,
       });
 
       const validateWallet = walletTransactionCalculation(
         data?.value,
         typeTransaction,
-        { id: wallet?.dataValues?.id, value: wallet?.dataValues?.value },
+        {
+          idAccount: wallet?.idAccount,
+          value: wallet?.value,
+        },
       );
 
       if (validateWallet?.type === 'error')
         throw new Error('Saldo insuficiente!');
 
       await this.transactionRepository
-        .create<TransactionModel>({ ...data, typeTransaction })
+        .save({ ...data, typeTransaction })
         .catch((err) => {
           throw new Error(`Erro ao criar transação no banco - ${err}`);
         });
 
       await this.walletRepository
-        .update<WalletModel>(
-          { value: validateWallet.HasBalance },
-          { where: { id: Number(validateWallet?.idWallet) } },
-        )
+        .update(validateWallet?.idAccount, { value: validateWallet.newValue })
         .catch((err) => {
           throw new Error(`Erro ao atualizar carteira de usuário - ${err}`);
         });
@@ -72,9 +73,7 @@ export class PurchaseConsumer {
     codeTransaction: string,
   ): Promise<void> {
     await this.transactionRepository
-      .findOne({
-        where: { codeTransaction },
-      })
+      .getOne({ codeTransaction })
       .then((resolve) => {
         if (resolve) throw new Error('Transação já realizada.');
       });

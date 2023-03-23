@@ -9,7 +9,6 @@ import { WalletModel } from './infra/database/model/WalletModel';
 import { TransactionModel } from './infra/database/model/TransactionModel';
 import { ErrorProducer } from './domain/jobs/ErrorProducer';
 import { ErrorConsumer } from './domain/jobs/ErrorConsumer';
-import { BankStatementRepository } from './infra/repository/BankStatementRepository';
 import { BankStatementApplication } from './application/BankStatementApplication';
 import { PurchaseApplication } from './application/PurchaseApplication';
 import { PurchaseProducer } from './domain/jobs/PurchaseProducer';
@@ -20,33 +19,35 @@ import { CancellationApplication } from './application/CancellationApplication';
 import { ReversalProducer } from './domain/jobs/ReversalProducer';
 import { ReversalConsumer } from './domain/jobs/ReversalConsumer';
 import { BalanceApplication } from './application/BalanceApplication';
-import { BalanceRepository } from './infra/repository/BalanceRepository';
+import { TransactionDatabaseRepository } from './infra/repository/TransactionDatabaseRepository';
+import { WalletDatabaseRepository } from './infra/repository/WalletDatabaseRepository';
+import { BankStatementService } from './domain/services/BankStatementService';
+import { BankStatementDatabaseRepository } from './infra/repository/BankStatementDatabaseRepository';
+import { BalanceService } from './domain/services/BalanceService';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.env${(process.env.NODE_ENV ? ('.' + process.env.NODE_ENV.trim()) : '')}`,
+      envFilePath: `.env${
+        process.env.NODE_ENV ? '.' + process.env.NODE_ENV.trim() : ''
+      }`,
       isGlobal: true,
     }),
-    BullModule.registerQueue(
-      { name: "transactionPurchase-queue" }
-    ),
-    BullModule.registerQueue(
-      { name: "transactionDeposit-queue" }
-    ),
+    BullModule.registerQueue({ name: 'transactionPurchase-queue' }),
+    BullModule.registerQueue({ name: 'transactionDeposit-queue' }),
     BullModule.registerQueue({
-      name: "errorTransaction-queue"
+      name: 'errorTransaction-queue',
     }),
     BullModule.registerQueue({
-      name: "cancellation-queue"
+      name: 'cancellation-queue',
     }),
     BullModule.registerQueue({
-      name: "reversal-queue"
+      name: 'reversal-queue',
     }),
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST,
-        port: Number(process.env.REDIS_PORT)
+        port: Number(process.env.REDIS_PORT),
       },
     }),
   ],
@@ -55,7 +56,7 @@ import { BalanceRepository } from './infra/repository/BalanceRepository';
     BankStatementApplication,
     PurchaseApplication,
     CancellationApplication,
-    BalanceApplication
+    BalanceApplication,
   ],
   providers: [
     ...SequelizeAdapter,
@@ -64,12 +65,16 @@ import { BalanceRepository } from './infra/repository/BalanceRepository';
     TransactionProducer,
     TransactionConsumer,
     PurchaseConsumer,
-    BankStatementRepository,
     CancellationProducer,
     CancellationConsumer,
     ReversalProducer,
     ReversalConsumer,
-    BalanceRepository,
+    PurchaseProducer,
+    BankStatementService,
+    BalanceService,
+    WalletDatabaseRepository,
+    TransactionDatabaseRepository,
+    BankStatementDatabaseRepository,
     {
       provide: 'wallet',
       useValue: WalletModel,
@@ -78,9 +83,19 @@ import { BalanceRepository } from './infra/repository/BalanceRepository';
       provide: 'transaction',
       useValue: TransactionModel,
     },
-    BankStatementRepository,
-    PurchaseProducer
+    {
+      provide: 'walletInterface',
+      useExisting: WalletDatabaseRepository,
+    },
+    {
+      provide: 'transactionInterface',
+      useExisting: TransactionDatabaseRepository,
+    },
+    {
+      provide: 'BankStatementInterface',
+      useExisting: BankStatementDatabaseRepository,
+    },
   ],
-  exports: [...SequelizeAdapter]
+  exports: [...SequelizeAdapter],
 })
-export class AppModule { }
+export class AppModule {}

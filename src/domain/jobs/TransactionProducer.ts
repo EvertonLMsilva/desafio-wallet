@@ -2,9 +2,9 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { Queue } from 'bull';
 import { randomUUID } from 'crypto';
-import { ReturnTransactionType } from '../../types/ReturnTransactionType';
-import { TransactionDepositDto } from '../../Dto/TransactionDepositDto';
-import { TransactionWithdrawalDto } from 'src/Dto/TransactionWithdrawalDto';
+import { TransactionWithdrawalDto } from 'src/infra/Dto/TransactionWithdrawalDto';
+import { TransactionDepositDto } from 'src/infra/Dto/TransactionDepositDto';
+import { ReturnMessageType } from '../types/ReturnMessageType';
 
 @Injectable()
 export class TransactionProducer {
@@ -12,7 +12,7 @@ export class TransactionProducer {
 
   async depositProducer(
     depositTransactionDto: TransactionDepositDto,
-  ): Promise<ReturnTransactionType> {
+  ): Promise<ReturnMessageType> {
     try {
       if (depositTransactionDto.value <= 0)
         throw new Error('Valor informado não pode ser negativo ou 0.');
@@ -31,7 +31,7 @@ export class TransactionProducer {
 
   async withdrawalProducer(
     withdrawalTransactionDto: TransactionWithdrawalDto,
-  ): Promise<ReturnTransactionType> {
+  ): Promise<ReturnMessageType> {
     try {
       if (withdrawalTransactionDto.value <= 0)
         throw new Error('Valor informado não pode ser negativo ou 0.');

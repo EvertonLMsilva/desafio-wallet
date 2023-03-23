@@ -1,18 +1,23 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Op } from 'sequelize';
-import { DateStatementDto } from 'src/Dto/DateStatementDto';
+import { DateStatementDto } from 'src/domain/dto/DateStatementDto';
+import TransactionEntity from 'src/domain/entity/TransactionEntity';
+import { BankStatementRepository } from 'src/domain/repository/BankStatementRepository';
 import { TransactionModel } from '../database/model/TransactionModel';
 import { WalletModel } from '../database/model/WalletModel';
 
 @Injectable()
-export class BankStatementRepository {
+export class BankStatementDatabaseRepository
+  implements BankStatementRepository
+{
   constructor(
     @Inject('transaction')
     private transactionRepository: typeof TransactionModel,
-    @Inject('wallet') private walletRepository: typeof WalletModel,
   ) {}
 
-  async findStatement(dateStatement: DateStatementDto): Promise<any> {
+  async findStatement(
+    dateStatement: DateStatementDto,
+  ): Promise<TransactionEntity[]> {
     const statement = await this.transactionRepository.findAll({
       attributes: {
         exclude: ['id', 'updatedAt', 'idAccount', 'codeTransaction', 'active'],
@@ -26,16 +31,6 @@ export class BankStatementRepository {
       },
     });
 
-    const walletValue = await this.walletRepository.findOne({
-      where: { idAccount: dateStatement?.idAccount },
-    });
-
-    const resolve = {
-      totalWallet: walletValue?.dataValues?.value,
-      account: dateStatement?.idAccount,
-      transactions: statement?.length > 0 ? statement : 'Conta sem registro!',
-    };
-
-    return resolve;
+    return statement;
   }
 }

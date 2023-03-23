@@ -1,31 +1,36 @@
-import { TypeTransaction } from "src/enum/TypeTransaction"
-import { WalletModel } from "src/infra/database/model/WalletModel"
-import { ReturnGetWallet } from "src/types/ReturnGetWallet"
+import { TypeTransaction } from 'src/enum/TypeTransaction';
+import { ReturnGetWallet } from 'src/infra/types/ReturnGetWallet';
 
 type Wallet = {
-    id: number;
-    value: number;
-}
+  idAccount: number;
+  value: number;
+};
 
-export const walletTransactionCalculation = (newValue: number, typeTransaction: TypeTransaction, wallet: Wallet): ReturnGetWallet => {
-
-    if ((typeTransaction === 'withdrawal' || typeTransaction === 'purchase') && (wallet.value - newValue) >= 0) {
-        return {
-            HasBalance: Number(wallet?.value) - newValue,
-            idWallet: wallet?.id,
-            type: 'withdrawal'
-        }
-    } else if (typeTransaction === 'deposit') {
-        return {
-            HasBalance: Number(wallet?.value) + newValue,
-            idWallet: wallet?.id,
-            type: 'deposit'
-        }
-    } else {
-        return {
-            HasBalance: 0,
-            idWallet: wallet?.id,
-            type: 'error'
-        }
-    }
-}
+export const walletTransactionCalculation = (
+  newValue: number,
+  typeTransaction: TypeTransaction,
+  wallet: Wallet,
+): ReturnGetWallet => {
+  if (
+    (typeTransaction === 'withdrawal' || typeTransaction === 'purchase') &&
+    wallet.value - newValue >= 0
+  ) {
+    return {
+      newValue: Number(wallet?.value) - newValue,
+      idAccount: wallet?.idAccount,
+      type: 'withdrawal',
+    };
+  } else if (typeTransaction === 'deposit') {
+    return {
+      newValue: Number(wallet?.value) + newValue,
+      idAccount: wallet?.idAccount,
+      type: 'deposit',
+    };
+  } else {
+    return {
+      newValue: 0,
+      idAccount: wallet?.idAccount,
+      type: 'error',
+    };
+  }
+};

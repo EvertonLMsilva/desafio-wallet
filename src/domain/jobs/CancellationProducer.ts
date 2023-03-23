@@ -2,8 +2,8 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators';
 import { Queue } from 'bull';
-import { CancellationDto } from 'src/Dto/CancellationDto';
-import { TransactionModel } from 'src/infra/database/model/TransactionModel';
+import { CancellationDto } from 'src/infra/Dto/CancellationDto';
+import { TransactionRepository } from '../repository/TransactionRepository';
 
 type ReturnCancellationType = {
   message: string;
@@ -13,26 +13,23 @@ type ReturnCancellationType = {
 export class CancellationProducer {
   constructor(
     @InjectQueue('cancellation-queue') private queue: Queue,
-    @Inject('transaction')
-    private transactionRepository: typeof TransactionModel,
+    @Inject('transactionInterface')
+    private transactionRepository: TransactionRepository,
   ) {}
 
   async createCancellation(
     cancellationDto: CancellationDto,
   ): Promise<ReturnCancellationType> {
     try {
-      const codeTransaction = await this.transactionRepository.findOne({
-        where: {
-          codeTransaction: cancellationDto?.codeTransaction,
-          typeTransaction: 'purchase',
-          active: true,
-        },
+      const codeTransaction = await this.transactionRepository.getOne({
+        codeTransaction: cancellationDto?.codeTransaction,
+        typeTransaction: 'purchase',
       });
 
-      if (codeTransaction?.dataValues)
+      if (!codeTransaction)
         throw new Error('Código de transação não encontrado!');
-
-      console.log(codeTransaction?.dataValues);
+      if (!codeTransaction.active)
+        throw new Error('Transação já cancelada!');
 
       await this.queue.add('cancellation-job', cancellationDto);
 

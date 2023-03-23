@@ -1,18 +1,18 @@
 import { Process, Processor } from '@nestjs/bull';
-import { CancellationDto } from 'src/Dto/CancellationDto';
+import { CancellationDto } from 'src/infra/Dto/CancellationDto';
 import { Inject, Injectable } from '@nestjs/common/decorators';
 import { Job } from 'bull';
-import { TransactionModel } from 'src/infra/database/model/TransactionModel';
 import { ErrorProducer } from './ErrorProducer';
 import { TypeTransaction } from 'src/enum/TypeTransaction';
 import { ReversalProducer } from './ReversalProducer';
+import { TransactionRepository } from '../repository/TransactionRepository';
 
 @Injectable()
 @Processor('cancellation-queue')
 export class CancellationConsumer {
   constructor(
-    @Inject('transaction')
-    private transactionRepository: typeof TransactionModel,
+    @Inject('transactionInterface')
+    private transactionRepository: TransactionRepository,
     private errorProducer: ErrorProducer,
     private reversalProducer: ReversalProducer,
   ) {}
@@ -23,39 +23,38 @@ export class CancellationConsumer {
     const typeTransaction = TypeTransaction.cancellation;
 
     try {
-      const transaction = await this.transactionRepository.findOne({
-        where: {
-          idAccount: data?.idAccount,
+      const transaction = await this.transactionRepository
+        .getOne({
           codeTransaction: data?.codeTransaction,
           typeTransaction: 'purchase',
-        },
-      });
+        })
+        .catch((err) => {
+          throw new Error(`Erro ao atualizar transação no banco - 002 ${err}`);
+        });
 
-      if (!transaction?.dataValues && !transaction?.dataValues?.active)
+      if (!transaction || !transaction?.active)
         throw new Error(
-          !transaction?.dataValues
-            ? 'Transação não encontrada'
-            : 'Transação já cancelada!',
+          !transaction ? 'Transação não encontrada' : 'Transação já cancelada!',
         );
 
       await this.transactionRepository
         .update(
-          { active: false },
           {
-            where: {
-              idAccount: data?.idAccount,
-              codeTransaction: data?.codeTransaction,
-            },
+            idAccount: data?.idAccount,
+            codeTransaction: data?.codeTransaction,
+            typeTransaction: 'purchase',
+            active: true,
           },
+          { active: false },
         )
         .catch((err) => {
           throw new Error(`Erro ao atualizar transação no banco - ${err}`);
         });
 
       await this.transactionRepository
-        .create<TransactionModel>({
+        .save({
           idAccount: data?.idAccount,
-          value: transaction?.dataValues?.value,
+          value: transaction?.value,
           codeTransaction: data?.codeTransaction,
           typeTransaction,
           description: data?.description,
@@ -67,8 +66,8 @@ export class CancellationConsumer {
       await this.reversalProducer
         .createReversal({
           idAccount: data?.idAccount,
-          codeTransaction: transaction?.dataValues?.codeTransaction,
-          description: transaction?.dataValues?.description,
+          codeTransaction: transaction?.codeTransaction,
+          description: transaction?.description,
         })
         .catch((err) => {
           throw new Error(`Erro ao gerar estorno - ${err}`);

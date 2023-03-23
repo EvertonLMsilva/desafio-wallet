@@ -2,7 +2,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { Queue } from 'bull';
 import { randomUUID } from 'crypto';
-import { PurchaseDto } from 'src/Dto/PurchaseDto';
+import { PurchaseDto } from 'src/infra/Dto/PurchaseDto';
 
 type ReturnPurchaseType = {
   message: string;
